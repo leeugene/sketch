@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fullscreen Slideshow with Timer</title>
+<style>
+  body, html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+  }
+  #slideshow-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+  #image-container {
+    position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: contain; /* 이미지를 화면에 맞게 확장 */
+  background-repeat: no-repeat; /* 이미지 반복 방지 */
+  background-position: center; /* 이미지를 가운데에 위치 */
+  }
+  #timer {
+    position: absolute;
+    top: 100px;
+    right: 100px;
+    color: white;
+    font-size: 100px;
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 10px;
+    border-radius: 5px;
+  }
+</style>
+</head>
+<body>
+<div id="slideshow-container">
+  <div id="image-container"></div>
+  <div id="timer"></div>
+  <audio id="bg-music" autoplay loop>
+    <source src="background.mp3" >
+    Your browser does not support the audio element.
+  </audio>
+</div>
+
+<script>
+  const images = ["1.png", "2.png", "3.png", "4.png"]; // Add image URLs here
+const interval = 5 * 60 * 1000; // 3 minutes in milliseconds
+
+const imageContainer = document.getElementById("image-container");
+const timerElement = document.getElementById("timer");
+let currentIndex = 0;
+let remainingTime = interval / 1000; // in seconds
+
+// Audio element for the alert sound
+const alertSound = new Audio("alert.mp3");
+
+function changeImage() {
+  const imageUrl = images[currentIndex];
+  imageContainer.style.backgroundImage = `url('${imageUrl}')`;
+  currentIndex = (currentIndex + 1) % images.length;
+  remainingTime = interval / 1000; // Reset remaining time
+
+  // Play alert sound when timer ends
+  alertSound.play();
+}
+
+function updateTimer() {
+  timerElement.textContent = formatTime(remainingTime);
+  remainingTime--;
+  if (remainingTime < 0) {
+    changeImage();
+  }
+}
+
+function formatTime(seconds) {
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = seconds % 60;
+  return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
+}
+
+// Initial calls
+changeImage();
+updateTimer();
+
+// Change image at specified interval
+setInterval(() => {
+  updateTimer();
+}, 1000);
+</script>
+</body>
+</html>
